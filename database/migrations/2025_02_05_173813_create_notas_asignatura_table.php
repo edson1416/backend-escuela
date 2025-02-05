@@ -14,10 +14,7 @@ return new class extends Migration
         Schema::create('notas_asignaturas', function (Blueprint $table) {
             $table->id();
             $table->foreignId('id_asignatura')->constrained('asignaturas');
-            $table->float('periodo1')->nullable();
-            $table->float('periodo2')->nullable();
-            $table->float('periodo3')->nullable();
-            $table->float('nota_final')->nullable();
+            $table->foreignId('id_periodo')->constrained('periodos');
             $table->foreignId('id_expediente')->constrained('expedientes');
             $table->timestamps();
         });

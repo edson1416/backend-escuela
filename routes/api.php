@@ -15,6 +15,7 @@ use App\Http\Controllers\Api\PasswordController;
 use App\Http\Controllers\Api\SituacionIngresoController;
 use App\Http\Controllers\Api\EstadoSolicitudController;
 use App\Http\Controllers\Api\SolicitudInscripcionController;
+use App\Http\Controllers\Api\PeriodoController;
 use App\Http\Controllers\Api\NotasAsignaturaController;
 use Illuminate\Support\Facades\Route;
 use Orion\Facades\Orion;
@@ -57,9 +58,11 @@ Route::group(['prefix' => 'solicitud-inscripcion'],function(){
     });
 });
 
-//rutas notas alumnos
-Route::group(['prefix' => 'administracion-notas' ,'middleware' => ['auth:sanctum']],function(){
-    Orion::resource('notas', NotasAsignaturaController::class);
+//rutas notas y periodos alumnos
+Route::group(['prefix' => 'notas' ,'middleware' => ['auth:sanctum']],function(){
+    Orion::resource('mis-notas', NotasAsignaturaController::class)->only('show');
+    Orion::resource('alumnos-notas', NotasAsignaturaController::class);
+    Orion::resource('periodo', PeriodoController::class)->only('store','update','delete','restore','search', 'index', 'show');
 });
 
 //Rutas usuarios del sistema

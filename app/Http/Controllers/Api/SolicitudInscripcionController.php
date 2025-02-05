@@ -8,7 +8,11 @@ use App\Mail\ChangePasswordMail;
 use App\Mail\ChangeStatusRequestMail;
 use App\Mail\SolicitudEnviadaMail;
 use App\Models\Alumno;
+use App\Models\Asignatura;
 use App\Models\Expediente;
+use App\Models\Grado;
+use App\Models\NotasAsignatura;
+use App\Models\Periodo;
 use App\Models\SolicitudInscripcion;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
@@ -88,54 +92,93 @@ class SolicitudInscripcionController extends Controller
          * */
         $correo = $request->correo_alumno;
         $correo_responsable = $request->correo_responsable;
-
-        $newAlumno = User::create([
-            'name' => $request->nombre_alumno.' '.$request->apellido_alumno,
-            'email' => $correo,
-            'password' => Hash::make('password123'),
-        ]);
-
-        $newAlumno->assignRole('alumno');
+        $estadoSolicitud = $request->id_estado;
 
         /*
-         * Creacion de registro Alumno
+         * Validamos si la solicitud fue aprobada
          * */
+        if ($estadoSolicitud == 2) {
+            $newAlumno = User::create([
+                'name' => $request->nombre_alumno . ' ' . $request->apellido_alumno,
+                'email' => $correo,
+                'password' => Hash::make('password123'),
+            ]);
 
-        $alumno = Alumno::create([
-            'nombre' => $request->nombre_alumno,
-            'apellido' => $request->apellido_alumno,
-            'correo' => $request->correo_alumno,
-            'telefono' => $request->get('telefono_alumno'),
-            'direccion' => $request->get('direccion_alumno'),
-            'fecha_nacimiento' => $request->get('fecha_nacimiento'),
-            'sexo' => $request->get('sexo'),
-            'id_user' => $newAlumno->id,
-        ]);
+            $newAlumno->assignRole('alumno');
 
-        /*
-         * Creacion Expediente
-         * */
-        $password_temporal = 'password123';
-        $idAlumno = $alumno->id;
+            /*
+             * Creacion de registro Alumno
+             * */
 
-        Expediente::create([
-            'alumno_id' => $idAlumno,
-            'grado_id' => $request->id_grado,
-            'record_year' => now()->year,
-        ]);
+            $alumno = Alumno::create([
+                'nombre' => $request->nombre_alumno,
+                'apellido' => $request->apellido_alumno,
+                'correo' => $request->correo_alumno,
+                'telefono' => $request->get('telefono_alumno'),
+                'direccion' => $request->get('direccion_alumno'),
+                'fecha_nacimiento' => $request->get('fecha_nacimiento'),
+                'sexo' => $request->get('sexo'),
+                'id_user' => $newAlumno->id,
+            ]);
 
-        /*
-         * Send Correo changePassword al Alumno y notificacion a Responsable
-         * */
+            /*
+             * Creacion Expediente
+             * */
+            $password_temporal = 'password123';
+            $idAlumno = $alumno->id;
+            $idGrado = $request->id_grado;
+            $expediente = Expediente::create([
+                'alumno_id' => $idAlumno,
+                'grado_id' => $idGrado,
+                'record_year' => now()->year,
+            ]);
 
-        if($correo){
-            Mail::to($correo)->send(new ChangePasswordMail($correo, $password_temporal ));
+            /*
+             * Send Correo changePassword al Alumno
+             * */
+
+            if ($correo) {
+                Mail::to($correo)->send(new ChangePasswordMail($correo, $password_temporal));
+            }
+
+            /*
+             * Creacion de Notas-Asignatura-Periodos
+             * */
+            $asignaturas = [];
+            $grado = Grado::find($idGrado);
+
+            if ($grado->id_ciclo == 4) {
+                $asignaturas = Asignatura::all()->pluck('id');
+            } else {
+                $asignaturas = Asignatura::where('id_categoria_asignatura', 1)->pluck('id');
+            }
+
+            $asignaturas->each(function ($asignatura) use ($expediente) {
+                //Creacion periodo
+                $periodo = Periodo::create([
+                    "tarea1" => 0,
+                    "tarea2" => 0,
+                    "tarea3" => 0,
+                    "examen" => 0,
+                    "nota_final" => 0,
+                    "numero_periodo" => 1
+                ]);
+
+                NotasAsignatura::create([
+                    'id_asignatura' => $asignatura,
+                    'id_periodo' => $periodo->id,
+                    'id_expediente' => $expediente->id,
+                ]);
+            });
         }
 
-        if($correo_responsable){
+        /*
+         * Se envia correo al responsable
+         * */
+        if ($correo_responsable) {
             Mail::to($correo_responsable)->send(new ChangeStatusRequestMail(
                 $request->get('nombre_responsable'),
-                $alumno->nombre,
+                $request->nombre_alumno . ' ' . $request->apellido_alumno,
                 $request->id_estado
             ));
         }

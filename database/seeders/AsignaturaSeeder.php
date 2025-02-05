@@ -33,6 +33,11 @@ class AsignaturaSeeder extends Seeder
                 'nombre' => 'Lenguaje',
                 'descripcion' => 'Comunicacion',
                 'id_categoria_asignatura' => 1
+            ],
+            [
+                'nombre' => 'Educacion Financiera',
+                'descripcion' => 'Conceptos, documentos y tramites financieros',
+                'id_categoria_asignatura' => 2
             ]
             ])->each(function($item){
                 Asignatura::create($item);

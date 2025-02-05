@@ -19,4 +19,8 @@ class Asignatura extends Model
     public function ProfesorAsignatura(){
         return $this->hasMany(ProfesorAsignatura::class, 'id_asignatura');
     }
+
+    public function NotasAsignatura(){
+        return $this->hasMany(NotasAsignatura::class, 'id_asignatura');
+    }
 }

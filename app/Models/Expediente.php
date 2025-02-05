@@ -16,4 +16,8 @@ class Expediente extends Model
     public function grado(){
         return $this->belongsTo(Grado::class, 'grado_id');
     }
+
+    public function NotasAsignadas(){
+        return $this->hasMany(NotasAsignatura::class, 'id_expediente');
+    }
 }
