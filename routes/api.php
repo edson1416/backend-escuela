@@ -17,6 +17,7 @@ use App\Http\Controllers\Api\EstadoSolicitudController;
 use App\Http\Controllers\Api\SolicitudInscripcionController;
 use App\Http\Controllers\Api\PeriodoController;
 use App\Http\Controllers\Api\NotasAsignaturaController;
+use App\Http\Controllers\Api\UsuarioController;
 use Illuminate\Support\Facades\Route;
 use Orion\Facades\Orion;
 
@@ -74,4 +75,8 @@ Route::group(['middleware' => ['auth:sanctum']],function(){
 
     //cambio de contraseña
     Route::post('change-password',[PasswordController::class,'changePassword']);
+
+    Route::group(['prefix' => 'usuario'],function(){
+        Route::get('/',[UsuarioController::class,'getUsuario']);
+    });
 });
