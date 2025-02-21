@@ -36,7 +36,7 @@ Route::group(['prefix' => 'catalogos'],function(){
     Orion::resource('ciclos',CicloController::class)->only('index');
     Orion::resource('horarios',HorarioController::class)->only('index');
     Orion::resource('secciones',SeccionController::class)->only('index');
-    Orion::resource('grados', GradoController::class)->only('index');
+    //Orion::resource('grados', GradoController::class)->only('index');
     Orion::resource('situacion_ingreso',SituacionIngresoController::class)->only('index');
     Orion::resource('estado_solicitud',EstadoSolicitudController::class)->only('index');
 //    Orion::resource('solicitud-inscripcion',SolicitudInscripcionController::class)->only('store');
@@ -45,7 +45,7 @@ Route::group(['prefix' => 'catalogos'],function(){
         Orion::resource('asignatura',AsignaturaController::class)->only('store','update','delete','restore','search');
         Orion::resource('horarios',HorarioController::class)->only('store','update','delete','restore');
         Orion::resource('secciones',SeccionController::class)->only('store','update','delete','restore','search');
-        Orion::resource('grados',GradoController::class)->only('store','update','delete','restore','search');
+        Orion::resource('grados',GradoController::class);
         Orion::resource('categoria-asignatura',CategoriaAsignaturaController::class)->only('store','update');
     });
 });

@@ -12,9 +12,18 @@ class GradoController extends Controller
 {
     protected $model = Grado::class;
 
+    public function filterableBy(): array
+    {
+        return [
+            'id_ciclo',
+            'id_seccion',
+            'seccion.id_horario'
+        ];
+    }
+
     public function alwaysIncludes(): array
     {
-        return ['seccion','seccion.horario','seccion.profesor','ciclo'];
+        return ['seccion', 'seccion.horario', 'seccion.profesor', 'ciclo'];
     }
 
     protected function buildIndexFetchQuery(Request $request, array $requestedRelations): Builder
@@ -24,7 +33,7 @@ class GradoController extends Controller
         $query->with([
             'seccion' => function ($query) {
                 $query->with(['profesor' => function ($query) {
-                    $query->select(['id', 'nombre', 'apellido','email','telefono']);
+                    $query->select(['id', 'nombre', 'apellido', 'email', 'telefono']);
                 }]);
             },
             'ciclo' => function ($query) {
