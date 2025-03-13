@@ -25,5 +25,9 @@ class Grado extends Model
     public function expediente(){
         return $this->hasMany(Expediente::class,'grado_id');
     }
+
+    public function solicitudes(){
+        return $this->hasMany(SolicitudInscripcion::class,'id_grado');
+    }
 }
 

@@ -27,4 +27,16 @@ class SolicitudInscripcion extends Model
         'id_estado'
     ];
 
+    public function getPartidaNacimientoAttribute($value){
+        return $value ? asset('storage/'.$value) : null;
+    }
+
+    public function getFotoAttribute($value){
+        return $value ? asset('storage/'.$value) : null;
+    }
+
+    public function grado(){
+        return $this->belongsTo(Grado::class, 'id_grado');
+    }
+
 }

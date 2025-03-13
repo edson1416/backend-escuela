@@ -18,6 +18,7 @@ use App\Http\Controllers\Api\SolicitudInscripcionController;
 use App\Http\Controllers\Api\PeriodoController;
 use App\Http\Controllers\Api\NotasAsignaturaController;
 use App\Http\Controllers\Api\UsuarioController;
+use App\Http\Controllers\Api\SolicitudesPendientesController;
 use Illuminate\Support\Facades\Route;
 use Orion\Facades\Orion;
 
@@ -36,7 +37,7 @@ Route::group(['prefix' => 'catalogos'],function(){
     Orion::resource('ciclos',CicloController::class)->only('index');
     Orion::resource('horarios',HorarioController::class)->only('index');
     Orion::resource('secciones',SeccionController::class)->only('index');
-    //Orion::resource('grados', GradoController::class)->only('index');
+    Orion::resource('grados', GradoController::class)->only('index');
     Orion::resource('situacion_ingreso',SituacionIngresoController::class)->only('index');
     Orion::resource('estado_solicitud',EstadoSolicitudController::class)->only('index');
 //    Orion::resource('solicitud-inscripcion',SolicitudInscripcionController::class)->only('store');
@@ -45,17 +46,18 @@ Route::group(['prefix' => 'catalogos'],function(){
         Orion::resource('asignatura',AsignaturaController::class)->only('store','update','delete','restore','search');
         Orion::resource('horarios',HorarioController::class)->only('store','update','delete','restore');
         Orion::resource('secciones',SeccionController::class)->only('store','update','delete','restore','search');
-        Orion::resource('grados',GradoController::class);
+        Orion::resource('grados',GradoController::class)->only('store','update','delete','restore','search');
         Orion::resource('categoria-asignatura',CategoriaAsignaturaController::class)->only('store','update');
     });
 });
 
 //rutas solicitud inscripcion
 Route::group(['prefix' => 'solicitud-inscripcion'],function(){
-    Orion::resource('solicitud',SolicitudInscripcionController::class)->only('store');
+    Orion::resource('solicitud',SolicitudInscripcionController::class)->only('store','index');
 
     Route::group(['middleware' => ['auth:sanctum']],function(){
-       Orion::resource('inscripcion',SolicitudInscripcionController::class)->only('update');
+       Orion::resource('inscripcion',SolicitudInscripcionController::class)->only('update','search');
+        Route::get('/pendientes', [SolicitudesPendientesController::class, 'pendientesCount']);
     });
 });
 

@@ -27,6 +27,20 @@ class SolicitudInscripcionController extends Controller
     protected $model = SolicitudInscripcion::class;
     protected $request = SolicitudInscripcionRequest::class;
 
+    public function alwaysIncludes(): array
+    {
+        return ['grado'];
+    }
+
+    public function filterableBy(): array
+    {
+        return [
+            'id_grado',
+            'sexo',
+            'id_estado'
+        ];
+    }
+
     protected function beforeStore(Request $request, Model $entity)
     {
         $partida_ruta = null;
@@ -41,26 +55,26 @@ class SolicitudInscripcionController extends Controller
 
         if ($partida_archivo) {
             $nombrePartida = Str::uuid() . '.' . $partida_archivo->getClientOriginalExtension();
-            $partida_ruta = $partida_archivo->storeAs('public/partidas-nacimiento', $nombrePartida);
-            $partida_ruta = str_replace('public/', '', $partida_ruta);
+            $partida_ruta = $partida_archivo->storeAs('partidas-nacimiento', $nombrePartida);
+            //$partida_ruta = str_replace('public/', '', $partida_ruta);
         }
 
         if ($foto_archivo) {
             $nombreFoto = Str::uuid() . '.' . $foto_archivo->getClientOriginalExtension();
-            $foto_ruta = $foto_archivo->storeAs('public/fotos-alumnos', $nombreFoto);
-            $foto_ruta = str_replace('public/', '', $foto_ruta);
+            $foto_ruta = $foto_archivo->storeAs('fotos-alumnos', $nombreFoto);
+            //$foto_ruta = str_replace('public/', '', $foto_ruta);
         }
 
         if ($certificado_archivo) {
             $nombreCertificado = Str::uuid() . '.' . $certificado_archivo->getClientOriginalExtension();
-            $certificado_ruta = $certificado_archivo->storeAs('public/certificados', $nombreCertificado);
-            $certificado_ruta = str_replace('public', '', $certificado_ruta);
+            $certificado_ruta = $certificado_archivo->storeAs('certificados', $nombreCertificado);
+            //$certificado_ruta = str_replace('public', '', $certificado_ruta);
         }
 
         if ($constancia_archivo) {
             $nombreConstancia = Str::uuid() . '.' . $constancia_archivo->getClientOriginalExtension();
-            $constancia_ruta = $constancia_archivo->storeAs('public/constancias', $nombreConstancia);
-            $constancia_ruta = str_replace('public/', '', $constancia_ruta);
+            $constancia_ruta = $constancia_archivo->storeAs('constancias', $nombreConstancia);
+            //$constancia_ruta = str_replace('public/', '', $constancia_ruta);
         }
 
 
